@@ -38,6 +38,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # apps
+    'todo' ,
+
+    # 3rd party apps
+    'corsheaders',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -48,7 +55,15 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware', # for cors header
 ]
+
+
+# whitelisting React port ot allow frontend comms. with backend
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:3000'
+)
+
 
 ROOT_URLCONF = 'backend.urls'
 
