@@ -21,8 +21,8 @@ from rest_framework import routers
 
 
 # creating router object
-# router.register takes in (prefix, viewset, basename)
-router = routers.DefaultRouter
+# router.register takes in (routename, viewset, basename)
+router = routers.DefaultRouter()
 router.register(r'tasks', views.TodoView, 'task')
 
 

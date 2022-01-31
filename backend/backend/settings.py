@@ -59,9 +59,9 @@ MIDDLEWARE = [
 ]
 
 
-# whitelisting React port ot allow frontend comms. with backend
+# whitelisting React port ot allow frontend communicate with backend
 CORS_ORIGIN_WHITELIST = (
-    'http://localhost:3000'
+    'http://localhost:3000', # comma here, is important
 )
 
 
