@@ -33,7 +33,7 @@ class CustomModal extends Component {
         this.setState({ activeItem });
     };
   
-    // rendering modal in the custommodal class received toggle and on save as props,
+    // rendering modal in the CustomModal class received toggle and onSave as props,
     render() {
         const { toggle, onSave } = this.props;
         return (

@@ -19,26 +19,23 @@ class App extends Component {
     };
   }
 
-
-  /* 
-    This is invoked immediately after a component is mounted (inserted into the tree)
-  */
+  
+  refreshList = () => {
+    /*
+    Axios connects between the backend and the frontend,
+    to send and receive HTTP requests;
+    i.e send client requests to server, get server response to client
+    */
+   axios   
+   .get("http://localhost:8000/api/tasks/") // this returns a promise
+   .then(res => this.setState({ taskList: res.data }))
+   .catch(err => console.log(err)); // incase of err, catch them
+  };
+  
+  // This is invoked immediately after a component is mounted (inserted into the tree)
   componentDidMount() {
     this.refreshList();
   }
-
- 
-  refreshList = () => {
-    /*
-      Axios connects between the backend and the frontend,
-      to send and receive HTTP requests;
-      i.e send client requests to server, get server response to client
-    */
-    axios   
-      .get("http://localhost:8000/api/tasks/") // this returns a promise
-      .then(res => this.setState({ taskList: res.data }))
-      .catch(err => console.log(err)); // incase of err, catch them
-  };
 
 
   displayCompleted = status => {
@@ -48,6 +45,63 @@ class App extends Component {
 
     return this.setState({ viewCompleted: false });
   };
+
+
+  toggle = () => { 
+    this.setState({ modal: !this.state.modal });
+  };
+  
+
+  // Create item
+  createItem = () => {
+    const item = { title: "", description: "", completed: false };
+    this.setState({ activeItem: item, modal: !this.state.modal });
+  };
+ 
+
+  //Edit item
+  editItem = item => {
+    this.setState({ activeItem: item, modal: !this.state.modal });
+  };
+
+
+  // Submit an item
+  handleSubmit = item => {
+    this.toggle();
+
+    // for updating tasks, 
+    if (item.id) {
+      // get specific item and modify it
+      axios
+      .put(`http://localhost:8000/api/tasks/${item.id}/`, item)
+      .then(res => this.refreshList());
+      return;
+    }
+    // post item after modifying, to complete update
+    axios
+    .post("http://localhost:8000/api/tasks/", item)
+    .then(res => this.refreshList());
+  };
+  /*
+    - for testing
+    handleSubmit = item => { //added this after modal creation
+    this.toggle(); 
+    alert("save" + JSON.stringify(item));};
+  */
+
+  
+  handleDelete = item => {
+    // delete item
+    axios
+    .delete(`http://localhost:8000/api/tasks/${item.id}/`)
+    .then(res => this.refreshList());
+  };
+  /*
+  - for testing
+    Delete item - function added after modal creation.
+    handleDelete = item => {
+    alert("delete" + JSON.stringify(item)) };
+  */ 
 
 
   // renders two spans which control which set of items are displayed
@@ -96,68 +150,13 @@ class App extends Component {
       </li>
     ));
   };
- 
-  toggle = () => { 
-    this.setState({ modal: !this.state.modal });
-  };
-
-
   
-  // Submit an item
-  handleSubmit = item => {
-    this.toggle();
-    
-    // for updating tasks, 
-    if (item.id) {
-      // get specific item and modify it
-      axios
-      .put(`http://localhost:8000/api/tasks/${item.id}/`, item)
-      .then(res => this.refreshList());
-      return;
-    }
-    
-    // post item after modifying, to complete update
-    axios
-    .post("http://localhost:8000/api/tasks/", item)
-    .then(res => this.refreshList());
-  };
-  /*
-    - for testing
-    handleSubmit = item => { //added this after modal creation
-    this.toggle(); 
-    alert("save" + JSON.stringify(item));};
-  */
 
-  
-  handleDelete = item => {
-    axios
-    .delete(`http://localhost:8000/api/tasks/${item.id}/`)
-    .then(res => this.refreshList());
-  };
-  /*
-  - for testing
-    Delete item - function added after modal creation.
-    handleDelete = item => {
-    alert("delete" + JSON.stringify(item)) };
-  */ 
-
-  // Create item
-  createItem = () => {
-    const item = { title: "", description: "", completed: false };
-    this.setState({ activeItem: item, modal: !this.state.modal });
-  };
-
-  //Edit item
-  editItem = item => {
-    this.setState({ activeItem: item, modal: !this.state.modal });
-  };
-
-
+  // rendering jsx
   render() {
     return (
       <main className="content">
         <h1 className="text-info text-uppercase text-center m-4">Task Manager</h1>
-
         <div className="row ">
           <div className="col-md-6 col-sm-10 mx-auto p-0">
             <div className="card p-3">
@@ -177,7 +176,7 @@ class App extends Component {
             </div>
           </div>
         </div>
-        <footer className='my-3 mb-2 bg-info text-white text-center'>
+        <footer className='m-2 bg-info text-white text-center'>
           Codexgrey Copyright 2022 &copy; All Rights Reserved
         </footer>
         {/* 
