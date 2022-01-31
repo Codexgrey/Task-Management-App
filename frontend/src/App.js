@@ -31,35 +31,28 @@ class App extends Component {
    .then(res => this.setState({ taskList: res.data }))
    .catch(err => console.log(err)); // incase of err, catch them
   };
+
   
   // This is invoked immediately after a component is mounted (inserted into the tree)
   componentDidMount() {
     this.refreshList();
   }
-
-
-  displayCompleted = status => {
-    if (status) {
-      return this.setState({ viewCompleted: true });
-    }
-
-    return this.setState({ viewCompleted: false });
-  };
-
-
+  
+  
+  // to handle modal open & close
   toggle = () => { 
     this.setState({ modal: !this.state.modal });
   };
   
 
-  // Create item
+  // Create item obj, setState to item obj, open modal
   createItem = () => {
     const item = { title: "", description: "", completed: false };
     this.setState({ activeItem: item, modal: !this.state.modal });
   };
  
 
-  //Edit item
+  // setState to given item obj, open modal, Edit item obj
   editItem = item => {
     this.setState({ activeItem: item, modal: !this.state.modal });
   };
@@ -68,7 +61,7 @@ class App extends Component {
   // Submit an item
   handleSubmit = item => {
     this.toggle();
-
+    
     // for updating tasks, 
     if (item.id) {
       // get specific item and modify it
@@ -83,13 +76,13 @@ class App extends Component {
     .then(res => this.refreshList());
   };
   /*
-    - for testing
+  - for testing
     handleSubmit = item => { //added this after modal creation
     this.toggle(); 
     alert("save" + JSON.stringify(item));};
-  */
-
-  
+    */
+   
+   
   handleDelete = item => {
     // delete item
     axios
@@ -98,12 +91,21 @@ class App extends Component {
   };
   /*
   - for testing
-    Delete item - function added after modal creation.
-    handleDelete = item => {
+  Delete item - function added after modal creation.
+  handleDelete = item => {
     alert("delete" + JSON.stringify(item)) };
-  */ 
+    */ 
+    
 
+  displayCompleted = status => {
+      if (status) {
+        return this.setState({ viewCompleted: true });
+      }
+  
+      return this.setState({ viewCompleted: false });
+    };
 
+    
   // renders two spans which control which set of items are displayed
   renderTabList = () => {
     return (
@@ -124,6 +126,7 @@ class App extends Component {
   renderItems = () => {
     const { viewCompleted } = this.state;
     const newItems = this.state.taskList.filter(
+      // recall view completed set to false by default
       item => item.completed === viewCompleted
     );
 
@@ -131,7 +134,7 @@ class App extends Component {
     return newItems.map(item => (
       <li key={item.id} className="list-group-item d-flex justify-content-between align-items-center">
         <span
-          // check viewCompleted state
+          // if viewCompleted = true; then css class = strike through title
           title={item.description}
           className={`todo-title mr-2 ${this.state.viewCompleted ? "completed-todo" : ""}`}
         >
